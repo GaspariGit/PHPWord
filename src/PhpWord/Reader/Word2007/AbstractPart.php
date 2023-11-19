@@ -421,6 +421,18 @@ abstract class AbstractPart
         } elseif ($node->nodeName == 'w:t' || $node->nodeName == 'w:delText') {
             // TextRun
             $textContent = htmlspecialchars($xmlReader->getValue('.', $node), ENT_QUOTES, 'UTF-8');
+            $nodes = $xmlReader->getElements('*', $node);
+            $composite = false;
+            foreach ($nodes as $node) {
+                if($node->nodeName == 'w:p') {
+                    // $this->readRun($xmlReader, $node, $paragraph, $docPart, $paragraphStyle);
+                    $this->readParagraph($xmlReader, $node, $parent, $docPart);
+                    $composite = true;
+                }
+            }
+            if($composite) {
+                return;
+            }
 
             if ($runParent->nodeName == 'w:hyperlink') {
                 $rId = $xmlReader->getAttribute('r:id', $runParent);
