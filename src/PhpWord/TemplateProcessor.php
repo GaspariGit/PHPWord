@@ -1453,4 +1453,40 @@ class TemplateProcessor
         self::$macroOpeningChars = $macroOpeningChars;
         self::$macroClosingChars = $macroClosingChars;
     }
+
+    /**
+    * Search for the labeled image's rId (labeled with alt text)
+    *
+    * @author Gaspari
+    * @param string $search
+    * @return String
+    */
+    public function seachImagerId($search)
+    {
+        if (substr($search, 0, 2) !== '${' && substr($search, -1) !== '}') {
+            $search = '${' . $search . '}';
+        }
+        $tagPos = strpos($this->tempDocumentMainPart, $search);
+        $rIdStart = strpos($this->tempDocumentMainPart, 'r:embed="', $tagPos)+9;
+        $rId=strstr(substr($this->tempDocumentMainPart, $rIdStart), '"', true);
+
+        return $rId;
+    }
+
+    /**
+     * Get img filename with it's rId
+     *
+     * @author Gaspari
+     * @param string $rId
+     * @return String
+     */
+
+    public function getImgFileName($rId)
+    {
+        $tagPos = strpos($this->tempDocumentRelations[$this->getMainPartName()], $rId);
+        $fileNameStart = strpos($this->tempDocumentRelations[$this->getMainPartName()], 'Target="media/', $tagPos)+14;
+        $fileName=strstr(substr($this->tempDocumentRelations[$this->getMainPartName()], $fileNameStart), '"', true);
+
+        return $fileName;
+    }
 }
